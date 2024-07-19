@@ -13,7 +13,7 @@ router.get(
   "/google/callback",
   passport.authenticate("google", { failureRedirect: "/" }),
   (req, res) => {
-    res.redirect("https://reactlvbackend.onrender.com/");
+    res.redirect("http://localhost:3000/");
   }
 );
 
