@@ -28,8 +28,8 @@
     // Route to add a language item
     router.post('/add-resourses-item', upload.single('image'), async (req, res) => {
       const { title, description, link } = req.body;
-      const image = `https://reactlvbackend.onrender.com/Resourses_img/${req.file.filename}`;
-    
+      const image = `http://localhost:5000/Resourses_img/${req.file.filename}`;
+       console.log(image);
       const resourses = new Resourses({
         title,
         description,

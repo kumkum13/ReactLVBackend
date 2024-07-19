@@ -26,7 +26,7 @@ const upload = multer({ storage });
 // Route to add new carousel item
 router.post('/add-carousel-item', upload.single('image'), async (req, res) => {
   const { label, text } = req.body;
-  const imageUrl = `https://reactlvbackend.onrender.com/crousel_img/${req.file.filename}`;
+  const imageUrl = `http://localhost:5000/crousel_img/${req.file.filename}`;
   const newItem = new CarouselItem({ imageUrl, label, text });
   try {
     await newItem.save();

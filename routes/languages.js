@@ -25,7 +25,7 @@ const upload = multer({ storage });
 // Route to add a language item
 router.post('/add-lang-item', upload.single('image'), async (req, res) => {
   const { title, description } = req.body;
-  const image = `https://reactlvbackend.onrender.com/languages_img/${req.file.filename}`;
+  const image = `http://localhost:5000/languages_img/${req.file.filename}`;
 
   const language = new Language({
     title,
