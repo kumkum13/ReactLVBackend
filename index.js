@@ -2,7 +2,6 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const session = require("express-session");
-const MongoStore = require('connect-mongo');
 const passport = require("passport");
 const StudentModel = require("./models/Students");
 const carouselRoutes = require("./routes/Crousel");
@@ -37,25 +36,13 @@ app.use(
   })
 );
 
-// app.use(
-//   session({
-//     secret: process.env.SECRET_KEY,
-//     resave: false,
-//     saveUninitialized: true,
-//   })
-// );
-app.use(session({
-  store: MongoStore.create({
-    mongoUrl: process.env.MongoDB_String,
-    mongoOptions: {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    },
-  }),
-  secret: process.env.SECRET_KEY, // Ensure this is set in your .env file
-  resave: false,
-  saveUninitialized: false,
-}));
+app.use(
+  session({
+    secret: process.env.SECRET_KEY,
+    resave: false,
+    saveUninitialized: true,
+  })
+);
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -304,7 +291,7 @@ app.get(
 
 
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
