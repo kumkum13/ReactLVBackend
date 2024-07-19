@@ -194,9 +194,7 @@ app.post("/forgetpassword", async (req, res) => {
   try {
     const user = await StudentModel.findOne({ email });
     if (!user) {
-      return res
-        .status(404)
-        .json({ status: "Error in mail", message: "User not found" });
+      return res.status(404).json({ status: "Error in mail", message: "User not found" });
     }
 
     const otp = crypto.randomInt(100000, 999999).toString();
@@ -213,12 +211,12 @@ Your OTP for password reset is: ${otp}.`,
 
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
-        return res.status(500).json({ status: "Error", message: error });
+        return res.status(500).json({ status: "Error", message: "Failed to send email. Please try again." });
       }
       res.json({ status: "Success", message: "OTP sent to email" });
     });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error });
+    res.status(500).json({ status: "Error", message: "Server error. Please try again." });
   }
 });
 
@@ -227,29 +225,23 @@ app.post("/verifyotp", (req, res) => {
 
   const storedOtp = otps.get(email);
   if (storedOtp !== otp) {
-    return res
-      .status(400)
-      .json({ status: "Invalid OTP", message: "Invalid OTP" });
+    return res.status(400).json({ status: "Invalid OTP", message: "Invalid OTP" });
   }
 
   StudentModel.updateOne({ email }, { $set: { password: newPassword } })
     .then((data) => {
       if (data.modifiedCount === 1) {
         otps.delete(email);
-        res.json({
-          status: "Success",
-          message: "Password updated successfully",
-        });
+        res.json({ status: "Success", message: "Password updated successfully" });
       } else {
-        res
-          .status(500)
-          .json({ status: "Error", message: "Password update failed" });
+        res.status(500).json({ status: "Error", message: "Password update failed. Please try again." });
       }
     })
     .catch((error) => {
-      res.status(500).json({ message: "Server error", error });
+      res.status(500).json({ status: "Error", message: "Server error. Please try again.", error });
     });
 });
+
 
 // Logout route
 app.post("/logout", (req, res) => {
