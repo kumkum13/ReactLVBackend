@@ -1,33 +1,31 @@
 const express = require('express');
-const multer = require('multer');
 const mongoose = require('mongoose');
 const router = express.Router();
 
+// Define the schema and model
 const carouselSchema = new mongoose.Schema({
-  imageUrl: { type: String, required: true },
-  label: { type: String, required: true },
-  text: { type: String, required: true },
+  image: { type: String }, // Change to store base64 image
+  label: { type: String },
+  text: { type: String},
 });
 
 const CarouselItem = mongoose.model('CarouselItem', carouselSchema);
 
-// Set up multer for file uploads
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'crousel_img/');
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname);
-  },
-});
+// Route to add new carousel item with base64 image
+router.post('/add-carousel-item', async (req, res) => {
+  const { label, text, imageBase64 } = req.body;
 
-const upload = multer({ storage });
+  // Validate base64 string
+  if (!imageBase64 || !/^data:image\/[a-z]+;base64,.+/.test(imageBase64)) {
+    return res.status(400).json({ message: 'Invalid image format' });
+  }
 
-// Route to add new carousel item
-router.post('/add-carousel-item', upload.single('image'), async (req, res) => {
-  const { label, text } = req.body;
-  const imageUrl = `https://reactlvbackend.onrender.com/crousel_img/${req.file.filename}`;
-  const newItem = new CarouselItem({ imageUrl, label, text });
+  const newItem = new CarouselItem({
+    image: imageBase64, // Store base64 image
+    label,
+    text,
+  });
+
   try {
     await newItem.save();
     res.json(newItem);
@@ -50,7 +48,7 @@ router.get('/carousel-items', async (req, res) => {
 
 // Route to delete carousel item by ID
 router.post('/delete-carousel-item', async (req, res) => {
-  const  {itemId}  = req.body;
+  const { itemId } = req.body;
   try {
     const deletedItem = await CarouselItem.findByIdAndDelete(itemId);
     if (!deletedItem) {
