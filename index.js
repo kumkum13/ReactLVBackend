@@ -8,7 +8,7 @@ const carouselRoutes = require("./routes/Crousel");
 const Languages = require("./routes/languages");
 const Resources = require("./routes/resourses");
 const Contact = require("./routes/contact");
-// const path = require("path");
+const path = require("path");
 require("dotenv").config();
 require("./config/passport");
 const nodemailer = require("nodemailer");
