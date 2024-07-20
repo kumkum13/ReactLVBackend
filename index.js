@@ -255,29 +255,49 @@ app.post("/logout", (req, res) => {
   });
 });
   
-// Current user route
+
+
+// Google OAuth callback
+app.get("/auth/google/callback", 
+  passport.authenticate("google", { failureRedirect: "/" }),
+  async (req, res) => {
+    // Successful authentication
+    if (req.user) {
+      // Find or create user in your database
+      let user = await StudentModel.findOne({ email: req.user.email });
+      if (!user) {
+        user = new StudentModel({
+          email: req.user.email,
+          name: req.user.name,
+          image: req.user.image,
+          // Add other fields as necessary
+        });
+        await user.save();
+      }
+      res.redirect("/"); // Redirect to home or desired route after login
+    } else {
+      res.redirect("/"); // Redirect to home or desired route after login
+    }
+  }
+);
+
 app.get("/current_user", async (req, res) => {
   if (req.isAuthenticated()) {
     let result = await StudentModel.findOne({ email: req.user.email });
     console.log("User Info: ", result);
-    res.json(req.user);
+    res.json(result);
   } else {
     res.json(null);
-  } 
+  }
 });
+
 
 app.get(
   "/google",
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
-app.get(
-  "/auth/google/callback",
-  passport.authenticate("google", { failureRedirect: "/login" }),
-  (req, res) => {
-    res.redirect("/");
-  }
-);
+
 
 
 
