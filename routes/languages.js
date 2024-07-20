@@ -1,36 +1,33 @@
 const express = require('express');
-const multer = require('multer');
 const mongoose = require('mongoose');
 const router = express.Router();
 
+// Define the schema and model
 const languageSchema = new mongoose.Schema({
   title: String,
   description: String,
-  image: String,
+  image: String, // Store base64 string
 });
 
 const Language = mongoose.model('Language', languageSchema);
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'languages_img/');
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + '-' + file.originalname);
-  },
-});
+// Middleware to parse JSON bodies
+const app = express();
+app.use(express.json());
 
-const upload = multer({ storage });
-
-// Route to add a language item
-router.post('/add-lang-item', upload.single('image'), async (req, res) => {
-  const { title, description } = req.body;
-  const image = `https://reactlvbackend.onrender.com/languages_img/${req.file.filename}`;
+// Route to add a language item with base64 image
+router.post('/add-lang-item', async (req, res) => {
+  const { title, description, imageBase64 } = req.body;
+  
+  // Validate base64 string
+  if (!imageBase64 || !/^data:image\/[a-z]+;base64,.+/.test(imageBase64)) {
+    return res.status(400).json({ message: 'Invalid image format' });
+  }
 
   const language = new Language({
     title,
     description,
-    image,
+    image: imageBase64, // Store base64 image
   });
 
   try {
