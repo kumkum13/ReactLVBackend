@@ -8,7 +8,7 @@ const carouselRoutes = require("./routes/Crousel");
 const Languages = require("./routes/languages");
 const Resources = require("./routes/resourses");
 const Contact = require("./routes/contact");
-const path = require("path");
+// const path = require("path");
 require("dotenv").config();
 require("./config/passport");
 const nodemailer = require("nodemailer");
@@ -61,8 +61,8 @@ app.use("/lang", Languages);
 app.use("/resourses", Resources);
 app.use("/contact", Contact);
 
-const staticImagePathcrousel = path.join(__dirname, 'crousel_img');
-app.use('/crousel_img', express.static(staticImagePathcrousel));
+// const staticImagePathcrousel = path.join(__dirname, 'crousel_img');
+// app.use('/crousel_img', express.static(staticImagePathcrousel));
 
 const staticImagePathlanguage = path.join(__dirname, 'languages_img');
 app.use('/languages_img', express.static(staticImagePathlanguage));
