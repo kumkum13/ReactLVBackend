@@ -40,7 +40,8 @@ app.use(
   session({
     secret: process.env.SECRET_KEY,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
+    cookie: { secure: false }, // Use secure: true in production
   })
 );
 
@@ -245,16 +246,13 @@ app.post("/verifyotp", (req, res) => {
 
 // Logout route
 app.post("/logout", (req, res) => {
-  req.logout((err) => {
+  req.session.destroy((err) => {
     if (err) {
-      return res
-        .status(500)
-        .json({ status: "Error logging out", error: err.message });
+      return res.status(500).json({ message: "Logout failed" });
     }
     res.json({ status: "Logged out successfully" });
   });
 });
-  
 
 
 // Google OAuth callback
@@ -282,12 +280,11 @@ app.get("/auth/google/callback",
 );
 
 app.get("/current_user", async (req, res) => {
-  if (req.isAuthenticated()) {
-    let result = await StudentModel.findOne({ email: req.user.email });
-    console.log("User Info: ", result);
-    res.json(result);
+  if (req.session.userId) {
+    const user = await User.findById(req.session.userId);
+    res.json(user);
   } else {
-    res.json(null);
+    res.status(401).json({ message: "Not authenticated" });
   }
 });
 
