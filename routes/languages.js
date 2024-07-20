@@ -18,7 +18,7 @@ app.use(express.json());
 // Route to add a language item with base64 image
 router.post('/add-lang-item', async (req, res) => {
   const { title, description, imageBase64 } = req.body;
-  
+
   // Validate base64 string
   if (!imageBase64 || !/^data:image\/[a-z]+;base64,.+/.test(imageBase64)) {
     return res.status(400).json({ message: 'Invalid image format' });
