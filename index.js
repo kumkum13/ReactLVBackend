@@ -279,14 +279,14 @@ app.get("/auth/google/callback",
   }
 );
 
-app.get("/current_user", async (req, res) => {
-  if (req.session.userId) {
-    const user = await User.findById(req.session.userId);
-    res.json(user);
+app.get("/current_user", (req, res) => {
+  if (req.isAuthenticated()) {
+    res.json(req.user);
   } else {
     res.status(401).json({ message: "Not authenticated" });
   }
 });
+
 
 
 app.get(
