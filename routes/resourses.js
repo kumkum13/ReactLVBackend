@@ -1,10 +1,11 @@
 const express = require('express');
 const multer = require('multer');
 const mongoose = require('mongoose');
-const path = require('path');
+// const path = require('path');
 
 const router = express.Router();
 
+// Define the schema and model
 const resoursesSchema = new mongoose.Schema({
   title: String,
   description: String,
@@ -14,28 +15,19 @@ const resoursesSchema = new mongoose.Schema({
 
 const Resourses = mongoose.model('Resourses', resoursesSchema);
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, '../Resourses_img/')); // Adjusted path
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + '-' + file.originalname);
-  },
-});
-
+// Configure multer to store images in memory
+const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 // Serve static files
 const app = express();
-console.log("Dir is", __dirname);
-console.log("Path is", path);
-app.use('/Resourses_img', express.static(path.join(__dirname, '../Resourses_img')));
+app.use(express.json());
 
 // Route to add a resource item
 router.post('/add-resourses-item', upload.single('image'), async (req, res) => {
   const { title, description, link } = req.body;
-  const image = `https://reactlvbackend.onrender.com/Resourses_img/${req.file.filename}`;
-  console.log(image);
+  const image = req.file.buffer.toString('base64'); // Convert buffer to Base64
+
   const resourses = new Resourses({
     title,
     description,
@@ -51,6 +43,7 @@ router.post('/add-resourses-item', upload.single('image'), async (req, res) => {
   }
 });
 
+// Route to get resource items
 router.get('/resourses-items', async (req, res) => {
   try {
     const resourses = await Resourses.find();
@@ -60,6 +53,7 @@ router.get('/resourses-items', async (req, res) => {
   }
 });
 
+// Route to delete a resource item
 router.post('/delete-resourses-item', async (req, res) => {
   const { itemId } = req.body;
   try {
