@@ -28,7 +28,7 @@ const upload = multer({ storage });
 // Serve static files
 const app = express();
 console.log( "Dir is",__dirname)
-console.log( "Path is",path)
+console.log( "Path is",path) 
 app.use('/Resourses_img', express.static(path.join(__dirname, 'Resourses_img')));
 
 // Route to add a resource item
