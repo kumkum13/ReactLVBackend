@@ -14,7 +14,7 @@ const CarouselItem = mongoose.model('CarouselItem', carouselSchema);
 // Set up multer for file uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'crousel_img/');
+    cb(null, 'public/crousel_img/');
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + '-' + file.originalname);
