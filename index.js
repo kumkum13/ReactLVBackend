@@ -254,8 +254,8 @@ app.post("/logout", (req, res) => {
     res.json({ status: "Logged out successfully" });
   });
 });
-  
-// Current user route
+
+
 app.get("/current_user", async (req, res) => {
   if (req.isAuthenticated()) {
     let result = await StudentModel.findOne({ email: req.user.email });
