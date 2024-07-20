@@ -14,7 +14,7 @@ const CarouselItem = mongoose.model('CarouselItem', carouselSchema);
 // Set up multer for file uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'public/crousel_img/');
+    cb(null, 'crousel_img/');
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + '-' + file.originalname);
@@ -26,7 +26,7 @@ const upload = multer({ storage });
 // Route to add new carousel item
 router.post('/add-carousel-item', upload.single('image'), async (req, res) => {
   const { label, text } = req.body;
-  const imageUrl = `/crousel_img/${req.file.filename}`;
+  const imageUrl = `https://reactlvbackend.onrender.com/crousel_img/${req.file.filename}`;
   const newItem = new CarouselItem({ imageUrl, label, text });
   try {
     await newItem.save();
