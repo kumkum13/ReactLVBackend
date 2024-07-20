@@ -40,8 +40,7 @@ app.use(
   session({
     secret: process.env.SECRET_KEY,
     resave: false,
-    saveUninitialized: false,
-    cookie: { secure: false }, // Use secure: true in production
+    saveUninitialized: true,
   })
 );
 
@@ -246,56 +245,39 @@ app.post("/verifyotp", (req, res) => {
 
 // Logout route
 app.post("/logout", (req, res) => {
-  req.session.destroy((err) => {
+  req.logout((err) => {
     if (err) {
-      return res.status(500).json({ message: "Logout failed" });
+      return res
+        .status(500)
+        .json({ status: "Error logging out", error: err.message });
     }
     res.json({ status: "Logged out successfully" });
   });
 });
 
 
-// Google OAuth callback
-app.get("/auth/google/callback", 
-  passport.authenticate("google", { failureRedirect: "/" }),
-  async (req, res) => {
-    // Successful authentication
-    if (req.user) {
-      // Find or create user in your database
-      let user = await StudentModel.findOne({ email: req.user.email });
-      if (!user) {
-        user = new StudentModel({
-          email: req.user.email,
-          name: req.user.name,
-          image: req.user.image,
-          // Add other fields as necessary
-        });
-        await user.save();
-      }
-      res.redirect("/"); // Redirect to home or desired route after login
-    } else {
-      res.redirect("/"); // Redirect to home or desired route after login
-    }
-  }
-);
-
-
-app.get("/current_user", (req, res) => {
+app.get("/current_user", async (req, res) => {
   if (req.isAuthenticated()) {
+    let result = await StudentModel.findOne({ email: req.user.email });
+    console.log("User Info: ", result);
     res.json(req.user);
   } else {
-    res.status(401).json({ message: "Not authenticated" });
-  }
+    res.json(null);
+  } 
 });
-
-
 
 app.get(
   "/google",
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
-
+app.get(
+  "/auth/google/callback",
+  passport.authenticate("google", { failureRedirect: "/login" }),
+  (req, res) => {
+    res.redirect("/");
+  }
+);
 
 
 
