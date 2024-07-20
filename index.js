@@ -279,6 +279,7 @@ app.get("/auth/google/callback",
   }
 );
 
+
 app.get("/current_user", (req, res) => {
   if (req.isAuthenticated()) {
     res.json(req.user);
