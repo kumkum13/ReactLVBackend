@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const router = express.Router();
+const multer = require('multer');
 
 // Define the schema and model
 const carouselSchema = new mongoose.Schema({
@@ -11,29 +12,34 @@ const carouselSchema = new mongoose.Schema({
 
 const CarouselItem = mongoose.model('CarouselItem', carouselSchema);
 
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+const app = express();
+app.use(express.json());
 // Route to add new carousel item with base64 image
-router.post('/add-carousel-item', async (req, res) => {
-  const { label, text, imageBase64 } = req.body;
-
-  // Validate base64 string
-  if (!imageBase64 || !/^data:image\/[a-z]+;base64,.+/.test(imageBase64)) {
-    return res.status(400).json({ message: 'Invalid image format' });
-  }
-
+router.post('/add-carousel-item', upload.single('image'), async (req, res) => {
+  const { label, text} = req.body;
+  const image = req.file.buffer.toString('base64');
+  
   const newItem = new CarouselItem({
-    image: imageBase64, // Store base64 image
+    image, // Store base64 image
     label,
     text,
   });
 
   try {
-    await newItem.save();
-    res.json(newItem);
+    const newCrousel = await newItem.save();
+    res.status(201).json(newCrousel);
   } catch (error) {
     console.error('Error adding carousel item:', error);
     res.status(500).json({ message: 'Failed to add carousel item' });
   }
 });
+
+
+
+
+
 
 // Route to get all carousel items
 router.get('/carousel-items', async (req, res) => {
