@@ -16,7 +16,7 @@ const Resourses = mongoose.model('Resourses', resoursesSchema);
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, '../Resourses_img/'));
+    cb(null, path.join(__dirname, '../Resourses_img/')); // Adjusted path
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + '-' + file.originalname);
@@ -27,6 +27,8 @@ const upload = multer({ storage });
 
 // Serve static files
 const app = express();
+console.log("Dir is", __dirname);
+console.log("Path is", path);
 app.use('/Resourses_img', express.static(path.join(__dirname, '../Resourses_img')));
 
 // Route to add a resource item
