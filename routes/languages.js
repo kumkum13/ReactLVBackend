@@ -1,6 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const router = express.Router();
+const multer = require('multer');
+
 
 // Define the schema and model
 const languageSchema = new mongoose.Schema({
@@ -11,23 +13,21 @@ const languageSchema = new mongoose.Schema({
 
 const Language = mongoose.model('Language', languageSchema);
 
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 // Middleware to parse JSON bodies
 const app = express();
 app.use(express.json());
 
 // Route to add a language item with base64 image
-router.post('/add-lang-item', async (req, res) => {
-  const { title, description, imageBase64 } = req.body;
-
-  // Validate base64 string
-  if (!imageBase64 || !/^data:image\/[a-z]+;base64,.+/.test(imageBase64)) {
-    return res.status(400).json({ message: 'Invalid image format' });
-  }
-
+router.post('/add-lang-item', upload.single('image'), async (req, res) => {
+  const { title, description } = req.body;
+  const image = req.file.buffer.toString('base64');
   const language = new Language({
     title,
     description,
-    image: imageBase64, // Store base64 image
+    image // Store base64 image
   });
 
   try {
@@ -37,6 +37,7 @@ router.post('/add-lang-item', async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 });
+
 
 // Route to get all language items
 router.get('/lang-items', async (req, res) => {

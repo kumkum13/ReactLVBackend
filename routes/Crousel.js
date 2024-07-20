@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const router = express.Router();
+const multer = require('multer');
 
 // Define the schema and model
 const carouselSchema = new mongoose.Schema({
@@ -11,8 +12,12 @@ const carouselSchema = new mongoose.Schema({
 
 const CarouselItem = mongoose.model('CarouselItem', carouselSchema);
 
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+const app = express();
+app.use(express.json());
 // Route to add new carousel item with base64 image
-router.post('/add-carousel-item', async (req, res) => {
+router.post('/add-carousel-item', upload.single('image'), async (req, res) => {
   const { label, text} = req.body;
   const image = req.file.buffer.toString('base64');
   
