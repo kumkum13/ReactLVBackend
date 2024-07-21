@@ -8,7 +8,7 @@ passport.use(
       clientID:
       process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "https://react-lv-backend.vercel.app/auth/google/callback",
+      callbackURL: "https://reactlvbackend.onrender.com/auth/google/callback",
     },
     (accessToken, refreshToken, profile, done) => {
       console.log();
