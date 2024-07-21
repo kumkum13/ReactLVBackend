@@ -148,8 +148,7 @@ app.post('/sendotp', async (req, res) => {
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
   otps1.set(email, otp);
-  // console.log(`OTP for ${email}: ${otp}`)
-
+   
   // Configure nodemailer
   const transporter = nodemailer.createTransport({
     service: 'Gmail',
@@ -180,8 +179,7 @@ app.post('/verifyotp1', (req, res) => {
   const { email, otp } = req.body;
 
   const storedOtp1 = otps1.get(email);
-  // console.log(otp);
-  // console.log(storedOtp1);
+   
   if (storedOtp1 !== otp) {
     return res.status(400).json({ status: 'Invalid OTP', message: 'Invalid OTP' });
   }
@@ -259,7 +257,7 @@ app.post("/logout", (req, res) => {
 app.get("/current_user", async (req, res) => {
   if (req.isAuthenticated()) {
     let result = await StudentModel.findOne({ email: req.user.email });
-    console.log("User Info: ", result);
+     
     res.json(result);
   } else {
     res.json(null);

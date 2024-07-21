@@ -11,7 +11,7 @@ passport.use(
       callbackURL: "https://reactlvbackend.onrender.com/auth/google/callback",
     },
     (accessToken, refreshToken, profile, done) => {
-      console.log();
+      
       StudentModel.findOne({ googleId: profile.id }).then((existingUser) => {
         if (existingUser) {
           done(null, existingUser);
