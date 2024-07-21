@@ -260,7 +260,7 @@ app.get("/current_user", async (req, res) => {
   if (req.isAuthenticated()) {
     let result = await StudentModel.findOne({ email: req.user.email });
     console.log("User Info: ", result);
-    res.json(req.user);
+    res.json(result);
   } else {
     res.json(null);
   } 
