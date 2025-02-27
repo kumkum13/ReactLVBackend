@@ -180,7 +180,7 @@ app.post('/verifyotp1', (req, res) => {
   const { email, otp } = req.body;
 
   const storedOtp1 = otps1.get(email);
-  // console.log(otp);
+  // console.log(otp); 
   // console.log(storedOtp1);
   if (storedOtp1 !== otp) {
     return res.status(400).json({ status: 'Invalid OTP', message: 'Invalid OTP' });
